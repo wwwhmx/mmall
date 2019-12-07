@@ -2,7 +2,7 @@
 
 #package file
 
-*.war
+#*.war
 *.ear
 
 #kdiff3 ignore
