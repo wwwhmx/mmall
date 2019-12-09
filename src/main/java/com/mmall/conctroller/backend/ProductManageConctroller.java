@@ -119,6 +119,9 @@ public class ProductManageConctroller {
     @ResponseBody
     public ServerResponse upload(HttpSession session,  @RequestParam(value = "upload_file", required = false) MultipartFile file, HttpServletRequest request) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
+        user.setPassword("admin");
+        user.setUsername("admin");
+
         if ( user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), "用户未登录，请管理员登陆");
         }
