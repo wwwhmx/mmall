@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.xml.ws.Response;
 import java.util.Map;
 
 /**
@@ -118,9 +119,9 @@ public class ProductManageConctroller {
     @RequestMapping("upload.do")
     @ResponseBody
     public ServerResponse upload(HttpSession session,  @RequestParam(value = "upload_file", required = false) MultipartFile file, HttpServletRequest request) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        user.setPassword("admin");
-        user.setUsername("admin");
+        //User user = (User) session.getAttribute(Const.CURRENT_USER);
+        ServerResponse<User> reponse = iUserService.getInformation(1);
+        User user = reponse.getData();
 
         if ( user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), "用户未登录，请管理员登陆");
