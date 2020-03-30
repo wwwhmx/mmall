@@ -12,6 +12,10 @@ public class Const {
     public static final String EMAIL = "email";
     public static final String USERNAME = "username";
 
+    public interface RedisCashExtime {
+        int REDIS_SESSION_EXITME = 60*30; //三十分钟
+    }
+
     public interface ProductListOrderBy{
         Set<String> PRICE_ASC_DESC = Sets.newHashSet("price_desc", "price_asc");
     }
