@@ -41,8 +41,8 @@ public class UserController {
             // 8AC25D241F09D3ADA8CDD1A9A4BCD826
             // 8AC25D241F09D3ADA8CDD1A9A4BCD826
             CookiesUtil.writeLoginToken(httpServletResponse, session.getId());
-            CookiesUtil.readLoginToken(httpServletRequest);
-            CookiesUtil.delLoginToken(httpServletRequest, httpServletResponse);
+//            CookiesUtil.readLoginToken(httpServletRequest);
+//            CookiesUtil.delLoginToken(httpServletRequest, httpServletResponse);
 
             RedisPoolUtil.setEx(session.getId(), JsonUtil.objToString(response.getData()), Const.RedisCashExtime.REDIS_SESSION_EXITME);
         }

@@ -48,6 +48,7 @@ public class CookiesUtil {
     public static void writeLoginToken(HttpServletResponse response, String token) {
         Cookie ck = new Cookie(COOKIE_NAME, token);
         ck.setDomain(COOKIE_DOMAIN);
+        ck.setHttpOnly(true);
         ck.setPath("/");
 
         //单位是秒
