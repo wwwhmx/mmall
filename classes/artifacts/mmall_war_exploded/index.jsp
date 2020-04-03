@@ -6,7 +6,7 @@
     <title>Document</title>
 </head>
 <body>
-<h2>Tomcat2</h2>
+<h2>Tomcat1</h2>
 <h2>Hello World!</h2>
 
 springmvc 上传文件
