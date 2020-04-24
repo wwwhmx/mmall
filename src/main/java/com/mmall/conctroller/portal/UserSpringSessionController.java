@@ -23,8 +23,8 @@ import javax.servlet.http.HttpSession;
  * Created by www on 2019/8/13.
  */
 @Controller
-@RequestMapping("/user/")
-public class UserController {
+@RequestMapping("/user/springsession")
+public class UserSpringSessionController {
 
 
     @Autowired
@@ -33,19 +33,23 @@ public class UserController {
     /*
     * 用户登录ro
     * */
-    @RequestMapping(value = "login.do", method = RequestMethod.POST)
+    @RequestMapping(value = "login.do", method = RequestMethod.GET)
     @ResponseBody
     public ServerResponse<User> login(String username, String password, HttpSession session, HttpServletResponse httpServletResponse) {
+        //测试全局异常
+        int i = 0;
+        int j = 666/i;
+
         ServerResponse<User> response = iUserService.login(username, password);
         if (response.isSuccess()) {
-            //session.setAttribute(Const.CURRENT_USER, response.getData());  	3E89C7F2E78E6563613615C537DEDDF4
+            session.setAttribute(Const.CURRENT_USER, response.getData());
             // 8AC25D241F09D3ADA8CDD1A9A4BCD826
             // 8AC25D241F09D3ADA8CDD1A9A4BCD826
-            CookiesUtil.writeLoginToken(httpServletResponse, session.getId());
+            //CookiesUtil.writeLoginToken(httpServletResponse, session.getId());
             //CookiesUtil.readLoginToken(httpServletRequest);
             //CookiesUtil.delLoginToken(httpServletRequest, httpServletResponse);
 
-            RedisShardedPoolUtil.setEx(session.getId(), JsonUtil.objToString(response.getData()), Const.RedisCashExtime.REDIS_SESSION_EXITME);
+            //RedisShardedPoolUtil.setEx(session.getId(), JsonUtil.objToString(response.getData()), Const.RedisCashExtime.REDIS_SESSION_EXITME);
         }
         return response;
     }
@@ -53,23 +57,37 @@ public class UserController {
     /*
     * 用户退出登录
     * */
-    @RequestMapping(value = "logout.do", method = RequestMethod.POST)
+    @RequestMapping(value = "logout.do", method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse<User> logout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+    public ServerResponse<User> logout( HttpSession session,HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
         String token = CookiesUtil.readLoginToken(httpServletRequest);
         CookiesUtil.delLoginToken(httpServletRequest, httpServletResponse);
         RedisShardedPoolUtil.del(token);
         return ServerResponse.createBysuccess();
     }
 
+
     /*
-   * 用户注册
-   * */
-    @RequestMapping(value = "register.do", method = RequestMethod.POST)
+* 获取用户信息
+* */
+    @RequestMapping(value = "getUserInfo.do", method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse<String> register(User user) {
-        return iUserService.register(user);
+    public ServerResponse<User> getUserInfo(HttpSession session, HttpServletRequest httpServletRequest) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+//        String loginToken = CookiesUtil.readLoginToken(httpServletRequest);
+//        if (StringUtils.isEmpty(loginToken)) {
+//            return ServerResponse.createByErrorMessage("用户未登录,无法获取当前用户信息");
+//        }
+//        String userJsonStr = RedisShardedPoolUtil.get(loginToken);
+//        User user = JsonUtil.stringToObj(userJsonStr, User.class);
+
+        if (user == null) {
+            return ServerResponse.createByErrorMessage("用户未登录");
+        }
+        return ServerResponse.createBysuccess(user);
     }
+
 
     /*
   * 用户校验
@@ -80,25 +98,7 @@ public class UserController {
         return iUserService.checkValid(str, type);
     }
 
-    /*
- * 获取用户信息
- * */
-    @RequestMapping(value = "getUserInfo.do", method = RequestMethod.POST)
-    @ResponseBody
-    public ServerResponse<User> getUserInfo(HttpServletRequest httpServletRequest) {
-        //User user = (User) session.getAttribute(Const.CURRENT_USER);
-        String loginToken = CookiesUtil.readLoginToken(httpServletRequest);
-        if (StringUtils.isEmpty(loginToken)) {
-            return ServerResponse.createByErrorMessage("用户未登录,无法获取当前用户信息");
-        }
-        String userJsonStr = RedisShardedPoolUtil.get(loginToken);
-        User user = JsonUtil.stringToObj(userJsonStr, User.class);
 
-        if (user == null) {
-            return ServerResponse.createByErrorMessage("用户未登录");
-        }
-        return ServerResponse.createBysuccess(user);
-    }
 
     /*
  * 忘记密码

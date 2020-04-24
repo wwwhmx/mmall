@@ -25,12 +25,21 @@
   </filter-mapping>
 
   <!--二期新增重置session时间得filter-->
-  <filter>
+ <!-- <filter>
     <filter-name>SessionExpireFilter</filter-name>
     <filter-class>com.mmall.conctroller.Common.SessionExpireFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>SessionExpireFilter</filter-name>
+    <url-pattern>*.do</url-pattern>
+  </filter-mapping>-->
+  
+  <filter>
+    <filter-name>springSessionRepositoryFilter</filter-name>
+    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>springSessionRepositoryFilter</filter-name>
     <url-pattern>*.do</url-pattern>
   </filter-mapping>
 
